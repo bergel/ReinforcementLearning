@@ -30,7 +30,7 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Run unit tests
-        run: bash ./scripts/getCoverage.sh
+        run: bash ./scripts/visualizeCoverage.sh
 
       - name: Archive code coverage results
         uses: actions/upload-artifact@v2
