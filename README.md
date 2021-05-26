@@ -1,5 +1,7 @@
 # ReinforcementLearning
 
+[![Tests](https://github.com/bergel/ReinforcementLearning/actions/workflows/runTest.yml/badge.svg)](https://github.com/bergel/ReinforcementLearning/actions/workflows/runTest.yml)
+
 ```Smalltalk
 [ Metacello new
     baseline: 'ReinforcementLearning';
