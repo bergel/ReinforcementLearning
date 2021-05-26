@@ -18,6 +18,8 @@
     repository: 'github://bergel/ReinforcementLearning:main';
     load ] on: MCMergeOrLoadWarning do: [:warning | warning load ].
 
+WorldMorph doOneCycle.
+"(Delay forSeconds: 2) wait."
 profiler := 'Hapao2' asClass runTestsForPackagesMatching: 'ReinforcementLearning*'.
 
 classSizeScale := 'NSScale' asClass linear range: #(5 30); domain: { 0 . (profiler allClasses max: #numberOfMethods) }.
@@ -35,9 +37,20 @@ m nodes: profiler packages forEach: [ :pak |
 ].
 m build.
 
+lbl := RSLabel text: 'Ratio of covered methods = ', (profiler coverage asString), ' %'. 
+RSLocation move: lbl above: m canvas nodes.
+m canvas add: lbl.
+
+fileCoverageResult := '/tmp/ratio' asFileReference.
+fileCoverageResult exists ifTrue: [ fileCoverageResult delete ].
+str := fileCoverageResult writeStream.
+str nextPutAll: profiler coverage asString.
+str close.
+
 m canvas extent: 1000 @ 1000.
 RSPNGExporter new
 	canvas: m canvas;
 	exportToFile: 'coverage.png' asFileReference.
 
 SmalltalkImage current quitPrimitive
+
