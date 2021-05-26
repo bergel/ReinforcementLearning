@@ -1,7 +1,7 @@
 # ReinforcementLearning
 
 [![Tests](https://github.com/bergel/ReinforcementLearning/actions/workflows/runTest.yml/badge.svg)](https://github.com/bergel/ReinforcementLearning/actions/workflows/runTest.yml)
-[![Coverage](https://raw.githubusercontent.com/bergel/ReinforcementLearning/main/ci_data/coverageBadge.svg)](https://github.com/bergel/ReinforcementLearning/main/ci_data/coverage.png)
+[![Coverage](https://raw.githubusercontent.com/bergel/ReinforcementLearning/main/ci_data/coverageBadge.svg)](https://github.com/bergel/ReinforcementLearning/blob/main/ci_data/coverage.png)
 
 ```Smalltalk
 [ Metacello new
