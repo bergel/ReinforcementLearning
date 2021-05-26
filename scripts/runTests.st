@@ -4,8 +4,8 @@ unitTestsBefore := TestCase withAllSubclasses.
 "We load the application software analyzer"
 [ Metacello new
     baseline: 'ReinforcementLearning';
-    repository: 'github://bergel/ReinforcementLearning';
-    load. ] on: MCMergeOrLoadWarning do: [ :warning | warning load ].
+    repository: 'github://bergel/ReinforcementLearning:main';
+    load ] on: MCMergeOrLoadWarning do: [:warning | warning load ]
 
 "We identify the unit tests contained in the loaded application"
 unitTests := (TestCase withAllSubclasses copyWithoutAll: unitTestsBefore) sorted: [ :c1 :c2 | c1 name < c2 name ].
