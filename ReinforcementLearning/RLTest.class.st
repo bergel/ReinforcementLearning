@@ -24,7 +24,7 @@ RLTest >> testContent02 [
 	self assert: (g at: 1 at: 1) equals: 2.
 ]
 
-{ #category : #tests }
+{ #category : #'tests - engine' }
 RLTest >> testEngine [
 
 	| result |

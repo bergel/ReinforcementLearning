@@ -9,10 +9,68 @@ Class {
 		'eps',
 		'qTable',
 		'currentState',
-		'actions'
+		'isDone',
+		'currentReward',
+		'totalReward',
+		'nextState',
+		'r'
 	],
 	#category : #ReinforcementLearning
 }
+
+{ #category : #running }
+RL >> act: action [
+
+	| newGrid newCarPosition gridItem |
+	newCarPosition := self newCarPosition: action.
+	gridItem := currentState grid atPosition: newCarPosition.
+	newGrid := currentState grid copy.
+	gridItem = $z ifTrue: [ currentReward := -100. isDone := true ].
+	gridItem = $i ifTrue: [ currentReward := 1000. isDone := true ].
+	gridItem = $. ifTrue: [ currentReward := -1. isDone := false. 
+		newGrid atPosition: currentState position put: $. .
+		newGrid atPosition: newCarPosition put: $c ].
+	gridItem = $c ifTrue: [ currentReward := -1. isDone := false ].
+	totalReward := totalReward + currentReward.
+	nextState := RLState new grid: newGrid; position: newCarPosition.
+	
+]
+
+{ #category : #running }
+RL >> actions [
+	"Return the considered actions"
+	^ #(1 2 3 4)
+]
+
+{ #category : #running }
+RL >> checkForNewState: aState [
+
+	qTable at: aState ifAbsentPut: [ self newQTableRow ]
+]
+
+{ #category : #running }
+RL >> chooseAction [
+	"Return the actions to be executed, i.e., a number between 1 and `self numberOfActions`"
+	^ r next < eps
+		ifTrue: [ self actions atRandom: r ]
+		ifFalse: [ (self qState: currentState) argmax ]
+
+]
+
+{ #category : #running }
+RL >> initialize [
+	super initialize.
+	r := Random seed: 42.
+	isDone := false.
+	currentReward := 0.
+	totalReward := 0.
+	numberOfEpisodes := 20.
+	maxEpisodeSteps := 100.
+	minAlpha := 0.02.
+	gamma := 1.0.
+	eps := 0.2.
+	qTable := Dictionary new.
+]
 
 { #category : #running }
 RL >> newCarPosition: action [
@@ -26,58 +84,42 @@ RL >> newCarPosition: action [
 ]
 
 { #category : #running }
+RL >> newQTableRow [
+
+	^ (1 to: self numberOfActions) collect: [ :nU | 0 ]
+]
+
+{ #category : #running }
+RL >> numberOfActions [
+	^ self actions size
+]
+
+{ #category : #running }
+RL >> qState: aState [
+
+	self checkForNewState: aState.
+	^ qTable at: aState
+]
+
+{ #category : #running }
+RL >> qState: aState action: anAction [
+
+	self checkForNewState: aState.
+	^ (qTable at: aState) at: anAction
+]
+
+{ #category : #running }
 RL >> run [
 	<script: 'self new run'>
-	| grid actionUP actionDown actionLeft actionRight startState newCarPos act r alphas q chooseAction totalReward alpha isDone currentAction tt nextState currentReward result |
-	grid := RLGrid new setContent: 'i.zc'.
+	| startState alphas currentAction result alpha |
+	"
 	actionUP := 1.
 	actionDown := 2.
 	actionLeft := 3.
 	actionRight := 4.
-	actions := { actionUP . actionDown . actionLeft . actionRight }.
-	startState := RLState new grid: grid; position: 2 @ 2.
-	newCarPos := [ :aState :action |
-		"return a new position"
-		| delta |
-		delta := { 0@ -1 . 0@1 . -1@0 . 1@0 } at: action ifAbsent: [ self error: 'Unknown action' ].
-		((aState position + delta) min: aState grid extent) max: 1 @ 1
-		 ].
-	
-	act := [ :aState :action |
-		| reward newGrid p gridItem tDone |
-		p := newCarPos value: aState value: action.
-		gridItem := aState grid atPosition: p.
-		newGrid := aState grid copy.
-		gridItem = $z ifTrue: [ reward := -100. tDone := true ].
-		gridItem = $i ifTrue: [ reward := 1000. tDone := true ].
-		gridItem = $. ifTrue: [ reward := -1. tDone := false. 
-			newGrid atPosition: aState position put: $. .
-			newGrid atPosition: p put: $c ].
-		gridItem = $c ifTrue: [ reward := -1. tDone := false ].
-		{ RLState new grid: newGrid; position: p . reward . tDone }
-	].
-
-	r := Random seed: 42.
-	numberOfEpisodes := 20.
-	maxEpisodeSteps := 100.
-	minAlpha := 0.02.
+	"
+	startState := RLState new grid: (RLGrid new setContent: 'i.zc'); position: 2 @ 2.
 	alphas := (minAlpha to: 1.0 count: numberOfEpisodes) reversed.
-	gamma := 1.0.
-	eps := 0.2.
-	qTable := Dictionary new.
-	
-	q := [ :state :action |
-		qTable at: state ifAbsentPut: [ (1 to: actions size) collect: [ :nU | 0 ] ].
-		action isNil 
-			ifTrue: [ qTable at: state ]
-			ifFalse: [ (qTable at: state) at: action ]
-		 ].
-	
-	chooseAction := [ :state |
-		r next < eps
-			ifTrue: [ actions atRandom: r ]
-			ifFalse: [ (q value: state value: nil) argmax ]
-		 ].
 
 	result := OrderedCollection new.
 	1 to: numberOfEpisodes do: [ :e |
@@ -87,15 +129,11 @@ RL >> run [
 		isDone := false.
 		maxEpisodeSteps timesRepeat: [ 
 			isDone ifFalse: [ 
-				currentAction := chooseAction value: currentState.
-				tt := act value: currentState value: currentAction.
-				nextState := tt first.
-				currentReward := tt second.
-				isDone := tt third.
-				totalReward := totalReward + currentReward.
+				currentAction := self chooseAction.
+				self act: currentAction.
 				
-				(q value: currentState value: nil) at: currentAction put: (
-					(q value: currentState value: currentAction) + (alpha * (currentReward + (gamma * (q value: nextState value: nil) max) - (q value: currentState value: currentAction)))).
+				(self qState: currentState) at: currentAction put: (
+					(self qState: currentState action: currentAction) + (alpha * (currentReward + (gamma * (self qState: nextState) max) - (self qState: currentState action: currentAction)))).
 				currentState := nextState
 			]
 		].
