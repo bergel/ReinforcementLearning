@@ -7,6 +7,12 @@ Class {
 	#category : #ReinforcementLearning
 }
 
+{ #category : #comparing }
+RLGrid >> = anotherObject [
+	anotherObject class ~= self class ifTrue: [ ^ false ].
+	^ content = anotherObject content
+]
+
 { #category : #accessing }
 RLGrid >> at: y at: x [
 	^ (content at: y) at: x
@@ -17,6 +23,16 @@ RLGrid >> at: y at: x put: aValue [
 	^ (content at: y) at: x put: aValue
 ]
 
+{ #category : #accessing }
+RLGrid >> atPosition: aPoint [
+	^ self at: aPoint y at: aPoint x
+]
+
+{ #category : #accessing }
+RLGrid >> atPosition: aPoint put: aValue [
+	^ self at: aPoint y at: aPoint x put: aValue
+]
+
 { #category : #initialization }
 RLGrid >> content [
 	^ content
@@ -24,6 +40,7 @@ RLGrid >> content [
 
 { #category : #initialization }
 RLGrid >> extent [
+	"Return a point"
 	^ content first size @ content size 
 ]
 
@@ -31,6 +48,12 @@ RLGrid >> extent [
 RLGrid >> initialize [
 	super initialize.
 	self setSize: 2
+]
+
+{ #category : #copying }
+RLGrid >> postCopy [
+	super postCopy.
+	content := content copy
 ]
 
 { #category : #printing }

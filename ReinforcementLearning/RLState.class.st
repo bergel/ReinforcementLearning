@@ -21,9 +21,9 @@ RLState >> grid [
 ]
 
 { #category : #accessing }
-RLState >> grid: anObject [
+RLState >> grid: aGrid [
 
-	grid := anObject
+	grid := aGrid
 ]
 
 { #category : #comparing }
@@ -38,7 +38,14 @@ RLState >> position [
 ]
 
 { #category : #accessing }
-RLState >> position: anObject [
+RLState >> position: aPoint [
 
-	position := anObject
+	position := aPoint
+]
+
+{ #category : #printing }
+RLState >> printOn: str [
+	str nextPutAll: 'S<'.
+	str nextPutAll: self hash asString.
+	str nextPutAll: '>'.	
 ]
