@@ -44,6 +44,11 @@ RLGrid >> extent [
 	^ content first size @ content size 
 ]
 
+{ #category : #comparing }
+RLGrid >> hash [
+	^ content hash
+]
+
 { #category : #initialization }
 RLGrid >> initialize [
 	super initialize.

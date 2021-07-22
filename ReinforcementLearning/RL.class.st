@@ -1,14 +1,34 @@
 Class {
-	#name : #RLExample,
+	#name : #RL,
 	#superclass : #Object,
+	#instVars : [
+		'numberOfEpisodes',
+		'maxEpisodeSteps',
+		'minAlpha',
+		'gamma',
+		'eps',
+		'qTable',
+		'currentState',
+		'actions'
+	],
 	#category : #ReinforcementLearning
 }
 
-{ #category : #'as yet unclassified' }
-RLExample >> exampleZombie [
-	<script: 'self new exampleZombie'>
+{ #category : #running }
+RL >> newCarPosition: action [
+	"Return the new position of a car, as a point. The action is a number from 1 to 4.
+	**Maybe we should have a RLCar class**
+	return a new position"
+	| delta |
+	delta := { 0@ -1 . 0@1 . -1@0 . 1@0 } at: action ifAbsent: [ self error: 'Unknown action' ].
+	^ ((currentState position + delta) min: currentState grid extent) max: 1 @ 1
 
-	| grid actionUP actionDown actionLeft actionRight actions startState newCarPos act r numberOfEpisodes maxEpisodeSteps minAlpha alphas gamma eps qTable q chooseAction currentState totalReward alpha isDone currentAction tt nextState currentReward |
+]
+
+{ #category : #running }
+RL >> run [
+	<script: 'self new run'>
+	| grid actionUP actionDown actionLeft actionRight startState newCarPos act r alphas q chooseAction totalReward alpha isDone currentAction tt nextState currentReward result |
 	grid := RLGrid new setContent: 'i.zc'.
 	actionUP := 1.
 	actionDown := 2.
@@ -59,6 +79,7 @@ RLExample >> exampleZombie [
 			ifFalse: [ (q value: state value: nil) argmax ]
 		 ].
 
+	result := OrderedCollection new.
 	1 to: numberOfEpisodes do: [ :e |
 		currentState := startState.
 		totalReward := 0.
@@ -78,8 +99,10 @@ RLExample >> exampleZombie [
 				currentState := nextState
 			]
 		].
-		Transcript show: ('Episode {1}: total reward -> {2}' format: { e . totalReward }); cr
+		Transcript show: ('Episode {1}: total reward -> {2}' format: { e . totalReward }); cr.
+		result add: totalReward 
 	].
+	^ result asArray
 
 
 

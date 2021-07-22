@@ -25,6 +25,14 @@ RLTest >> testContent02 [
 ]
 
 { #category : #tests }
+RLTest >> testEngine [
+
+	| result |
+	result := RL new run.
+	self assert: result equals: #(-100 995 998 999 996 999 994 -100 997 999 999 999 -100 997 998 999 999 999 998 999)
+]
+
+{ #category : #tests }
 RLTest >> testGrid [
 
 	| g |
