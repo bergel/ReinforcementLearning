@@ -29,7 +29,22 @@ RLTest >> testEngine [
 
 	| result |
 	result := RL new run.
-	self assert: result equals: #(-100 995 998 999 996 999 994 -100 997 999 999 999 -100 997 998 999 999 999 998 999)
+	self assert: result equals: #(-100 994 997 996 999 998 999 999 999 999 999 999 999 999 997 998 999 999 999 998)
+]
+
+{ #category : #'tests - engine' }
+RLTest >> testEngineIfLearnt [
+
+	| rl |
+	rl := RL new.
+	rl setInitialContent: 'i.z.'.
+	rl run.
+	rl setInitialContent: 'i.z.'.
+	self assert: rl carPosition equals: 2 @ 2.
+	rl actOnBestAction.
+	self assert: rl carPosition equals: 2 @ 1.
+	rl actOnBestAction.
+	self assert: rl carPosition equals: 1 @ 1.
 ]
 
 { #category : #tests }

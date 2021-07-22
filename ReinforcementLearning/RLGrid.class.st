@@ -33,12 +33,12 @@ RLGrid >> atPosition: aPoint put: aValue [
 	^ self at: aPoint y at: aPoint x put: aValue
 ]
 
-{ #category : #initialization }
+{ #category : #accessing }
 RLGrid >> content [
 	^ content
 ]
 
-{ #category : #initialization }
+{ #category : #accessing }
 RLGrid >> extent [
 	"Return a point"
 	^ content first size @ content size 
@@ -68,18 +68,34 @@ RLGrid >> printOn: str [
 ]
 
 { #category : #initialization }
-RLGrid >> setContent: aContent [
+RLGrid >> setContent: aContentAsString [
+	"Set the content of the grid using a String"
 	| e index |
 	e := self extent.
 	index := 1.
 	1 to: e y do: [ :y |
 		1 to: e x do: [ :x |
-			self at: y at: x put: (aContent at: index).
+			self at: y at: x put: (aContentAsString at: index).
 			index := index + 1 ] ]
 ]
 
 { #category : #initialization }
 RLGrid >> setSize: anInteger [
+	"Set the grid as a square of size anInteger"
 	content := (1 to: anInteger) collect: [ :notUsed | Array new: anInteger withAll: $. ] as: Array
 	
+]
+
+{ #category : #initialization }
+RLGrid >> setZombies: numberOfZombiesToAdd [
+	| random numberOfZombiesLeftToAdd s pos |
+	random := Random seed: 42.
+	numberOfZombiesLeftToAdd := numberOfZombiesToAdd.
+	s := self extent.
+	(numberOfZombiesLeftToAdd > 0) whileTrue: [ 
+		pos := (random nextInteger: s) @ (random nextInteger: s).
+		(self atPosition: pos) = $. ifTrue: [ 
+			self atPosition: pos put: $z.
+			numberOfZombiesLeftToAdd := numberOfZombiesLeftToAdd - 1 ]
+	]
 ]

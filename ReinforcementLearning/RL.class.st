@@ -13,7 +13,8 @@ Class {
 		'currentReward',
 		'totalReward',
 		'nextState',
-		'r'
+		'r',
+		'startState'
 	],
 	#category : #ReinforcementLearning
 }
@@ -27,19 +28,37 @@ RL >> act: action [
 	newGrid := currentState grid copy.
 	gridItem = $z ifTrue: [ currentReward := -100. isDone := true ].
 	gridItem = $i ifTrue: [ currentReward := 1000. isDone := true ].
-	gridItem = $. ifTrue: [ currentReward := -1. isDone := false. 
+	('zi' includes: gridItem) ifFalse: [ currentReward := -1. isDone := false ].
+"	gridItem = $. ifTrue: [ currentReward := -1. isDone := false. 
 		newGrid atPosition: currentState position put: $. .
-		newGrid atPosition: newCarPosition put: $c ].
-	gridItem = $c ifTrue: [ currentReward := -1. isDone := false ].
+		newGrid atPosition: newCarPosition put: $c ]."
+	"gridItem = $c ifTrue: [ currentReward := -1. isDone := false ]."
 	totalReward := totalReward + currentReward.
 	nextState := RLState new grid: newGrid; position: newCarPosition.
 	
 ]
 
 { #category : #running }
+RL >> actOnBestAction [
+	self act: self bestAction.
+	currentState := nextState.
+]
+
+{ #category : #running }
 RL >> actions [
 	"Return the considered actions"
 	^ #(1 2 3 4)
+]
+
+{ #category : #running }
+RL >> bestAction [
+
+	^ (self qState: currentState) argmax
+]
+
+{ #category : #running }
+RL >> carPosition [
+	^ currentState position
 ]
 
 { #category : #running }
@@ -50,11 +69,12 @@ RL >> checkForNewState: aState [
 
 { #category : #running }
 RL >> chooseAction [
-	"Return the actions to be executed, i.e., a number between 1 and `self numberOfActions`"
-	^ r next < eps
-		ifTrue: [ self actions atRandom: r ]
-		ifFalse: [ (self qState: currentState) argmax ]
 
+	"Return the actions to be executed, i.e., a number between 1 and `self numberOfActions`"
+
+	^ r next < eps
+		  ifTrue: [ self actions atRandom: r ]
+		  ifFalse: [ self bestAction ]
 ]
 
 { #category : #running }
@@ -70,6 +90,9 @@ RL >> initialize [
 	gamma := 1.0.
 	eps := 0.2.
 	qTable := Dictionary new.
+	
+	"Initialize the engine with the very simple map"
+	self setInitialContent: 'i.zc'
 ]
 
 { #category : #running }
@@ -111,14 +134,13 @@ RL >> qState: aState action: anAction [
 { #category : #running }
 RL >> run [
 	<script: 'self new run'>
-	| startState alphas currentAction result alpha |
+	| alphas currentAction result alpha |
 	"
 	actionUP := 1.
 	actionDown := 2.
 	actionLeft := 3.
 	actionRight := 4.
 	"
-	startState := RLState new grid: (RLGrid new setContent: 'i.zc'); position: 2 @ 2.
 	alphas := (minAlpha to: 1.0 count: numberOfEpisodes) reversed.
 
 	result := OrderedCollection new.
@@ -153,4 +175,10 @@ RL >> run [
 
 
 
+]
+
+{ #category : #running }
+RL >> setInitialContent: aString [
+	startState := RLState new grid: (RLGrid new setContent: aString); position: 2 @ 2.
+	currentState := startState
 ]
