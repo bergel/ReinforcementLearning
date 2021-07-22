@@ -92,7 +92,7 @@ RL >> initialize [
 	qTable := Dictionary new.
 	
 	"Initialize the engine with the very simple map"
-	self setInitialContent: 'i.zc'
+	self setInitialContent: '.z.i'
 ]
 
 { #category : #running }
@@ -115,6 +115,11 @@ RL >> newQTableRow [
 { #category : #running }
 RL >> numberOfActions [
 	^ self actions size
+]
+
+{ #category : #running }
+RL >> numberOfEpisodes: aNumber [
+	numberOfEpisodes := aNumber
 ]
 
 { #category : #running }
@@ -179,6 +184,11 @@ RL >> run [
 
 { #category : #running }
 RL >> setInitialContent: aString [
-	startState := RLState new grid: (RLGrid new setContent: aString); position: 2 @ 2.
+	self setInitialGrid: (RLGrid new setContent: aString)
+]
+
+{ #category : #running }
+RL >> setInitialGrid: aGrid [
+	startState := RLState new grid: aGrid; position: 1 @ 1.
 	currentState := startState
 ]

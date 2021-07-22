@@ -39,6 +39,11 @@ RLGrid >> content [
 ]
 
 { #category : #accessing }
+RLGrid >> contentAsString [
+	^ '' join: (content collect: [ :l | '' join: l ])
+]
+
+{ #category : #accessing }
 RLGrid >> extent [
 	"Return a point"
 	^ content first size @ content size 
@@ -53,6 +58,11 @@ RLGrid >> hash [
 RLGrid >> initialize [
 	super initialize.
 	self setSize: 2
+]
+
+{ #category : #accessing }
+RLGrid >> numberOfZombies [
+	^ ((content flatCollect: #yourself) select: [ :c | c = $z ]) size
 ]
 
 { #category : #copying }
@@ -70,13 +80,19 @@ RLGrid >> printOn: str [
 { #category : #initialization }
 RLGrid >> setContent: aContentAsString [
 	"Set the content of the grid using a String"
-	| e index |
-	e := self extent.
+	| e index sideLength |
+	sideLength := aContentAsString size sqrt.
+	self setSize: sideLength.
 	index := 1.
-	1 to: e y do: [ :y |
-		1 to: e x do: [ :x |
+	1 to: sideLength do: [ :y |
+		1 to: sideLength do: [ :x |
 			self at: y at: x put: (aContentAsString at: index).
 			index := index + 1 ] ]
+]
+
+{ #category : #initialization }
+RLGrid >> setIceCreamBottomRight [
+	self atPosition: self extent put: $i
 ]
 
 { #category : #initialization }
@@ -92,8 +108,8 @@ RLGrid >> setZombies: numberOfZombiesToAdd [
 	random := Random seed: 42.
 	numberOfZombiesLeftToAdd := numberOfZombiesToAdd.
 	s := self extent.
-	(numberOfZombiesLeftToAdd > 0) whileTrue: [ 
-		pos := (random nextInteger: s) @ (random nextInteger: s).
+	[ numberOfZombiesLeftToAdd > 0 ] whileTrue: [ 
+		pos := (random nextInteger: s x ) @ (random nextInteger: s y).
 		(self atPosition: pos) = $. ifTrue: [ 
 			self atPosition: pos put: $z.
 			numberOfZombiesLeftToAdd := numberOfZombiesLeftToAdd - 1 ]

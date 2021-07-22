@@ -4,7 +4,7 @@ Class {
 	#category : #ReinforcementLearning
 }
 
-{ #category : #tests }
+{ #category : #'test - grid' }
 RLTest >> testContent [
 
 	| g cc |
@@ -14,7 +14,7 @@ RLTest >> testContent [
 	self assert: cc equals: (Array new: 4 withAll: $.)
 ]
 
-{ #category : #tests }
+{ #category : #'test - grid' }
 RLTest >> testContent02 [
 
 	| g |
@@ -29,7 +29,7 @@ RLTest >> testEngine [
 
 	| result |
 	result := RL new run.
-	self assert: result equals: #(-100 994 997 996 999 998 999 999 999 999 999 999 999 999 997 998 999 999 999 998)
+	self assert: result equals: #(-104 997 999 999 999 999 998 999 999 998 999 999 999 999 999 998 998 -100 999 997)
 ]
 
 { #category : #'tests - engine' }
@@ -37,17 +37,17 @@ RLTest >> testEngineIfLearnt [
 
 	| rl |
 	rl := RL new.
-	rl setInitialContent: 'i.z.'.
+	rl setInitialContent: '.z.i'.
 	rl run.
-	rl setInitialContent: 'i.z.'.
-	self assert: rl carPosition equals: 2 @ 2.
-	rl actOnBestAction.
-	self assert: rl carPosition equals: 2 @ 1.
-	rl actOnBestAction.
+	rl setInitialContent: '.z.i'.
 	self assert: rl carPosition equals: 1 @ 1.
+	rl actOnBestAction.
+	self assert: rl carPosition equals: 1 @ 2.
+	rl actOnBestAction.
+	self assert: rl carPosition equals: 2 @ 2.
 ]
 
-{ #category : #tests }
+{ #category : #'test - grid' }
 RLTest >> testGrid [
 
 	| g |
@@ -57,7 +57,7 @@ RLTest >> testGrid [
 	self assert: g extent equals: 2 @ 2
 ]
 
-{ #category : #tests }
+{ #category : #'test - grid' }
 RLTest >> testGrid02 [
 
 	| g |
@@ -67,7 +67,7 @@ RLTest >> testGrid02 [
 	self assert: (g content collect: #size) asSet asArray equals: #(10)
 ]
 
-{ #category : #tests }
+{ #category : #'test - grid' }
 RLTest >> testGridPrinting [
 
 	| g |
@@ -78,7 +78,7 @@ RLTest >> testGridPrinting [
 '
 ]
 
-{ #category : #tests }
+{ #category : #'test - grid' }
 RLTest >> testGridSetContent [
 
 	| g |
@@ -90,13 +90,29 @@ zc
 '
 ]
 
-{ #category : #tests }
-RLTest >> testZombie [
+{ #category : #'test - grid' }
+RLTest >> testNumberOfZombies [
+	| grid |
+	grid := RLGrid new setContent: 'i.z.'.
+	self assert: grid numberOfZombies equals: 1
+]
+
+{ #category : #'test - grid' }
+RLTest >> testNumberOfZombies02 [
+	self assert: RLGrid new numberOfZombies equals: 0
+]
+
+{ #category : #'test - grid' }
+RLTest >> testNumberOfZombies03 [
+	self assert: (RLGrid new setSize: 20; setZombies: 5; numberOfZombies) equals: 5
+]
+
+{ #category : #'test - grid' }
+RLTest >> testSetContent [
 
 	| grid |
-	grid := RLGrid new.
-	grid setContent: 'i*zc'.
+	grid := RLGrid new setContent: '.zzz....i'.
+	self assert: grid extent equals: 3 @ 3.
+	self assert: grid contentAsString equals: '.zzz....i'.
 	
-
-
 ]
