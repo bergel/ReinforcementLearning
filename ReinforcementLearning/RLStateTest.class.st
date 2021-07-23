@@ -131,3 +131,14 @@ RLStateTest >> testVisualize04 [
 	self assert: c class equals: RSCanvas.
 	self assert: c numberOfShapes equals: 10.
 ]
+
+{ #category : #visualization }
+RLStateTest >> testVisualize05 [
+
+	| s c |
+	s := RLState new grid: (RLGrid new setContent: '.zz....zi').
+	s position: 2 @ 2.
+	c := s visualize.
+	self assert: c class equals: RSCanvas.
+	self assert: c numberOfShapes equals: 10.
+]

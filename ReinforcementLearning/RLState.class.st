@@ -71,9 +71,9 @@ RLState >> visualize [
 	grid ifNil: [ ^ self visualizeWithoutGrid ].
 	
 	c := grid visualize.
-	carShape := RSCircle new size: 20; color: Color blue lighter lighter.
+	carShape := RSCircle new size: 15; color: Color blue lighter lighter.
 	c add: carShape.
-	carShape translateBottomRightTo: self position * 20.
+	carShape translateTo: self position - (0.5 @ 0.5) * 20.
 	^ c 
 ]
 

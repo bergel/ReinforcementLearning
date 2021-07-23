@@ -80,7 +80,7 @@ RL >> numberOfEpisodes: aNumber [
 { #category : #playing }
 RL >> play [
 	"Return the position of the car"
-	| currentState isDone path actions tupple |
+	| currentState isDone actions tupple |
 	currentState := startState.
 	isDone := false.
 	path := OrderedCollection new.
@@ -112,9 +112,9 @@ RL >> qState: state action: action [
 { #category : #running }
 RL >> run [
 
-	| alphas currentState totalReward alpha isDone currentAction tupple nextState currentReward result |
+	| alphas currentState totalReward alpha isDone currentAction tupple nextState currentReward |
 	alphas := (minAlpha to: 1.0 count: numberOfEpisodes) reversed.
-	result := OrderedCollection new.
+	rewards := OrderedCollection new.
 	1 to: numberOfEpisodes do: [ :e |
 		currentState := startState.
 		totalReward := 0.
@@ -134,13 +134,10 @@ RL >> run [
 				currentState := nextState
 			]
 		].
-		result add: totalReward.
+		rewards add: totalReward.
 	].
-	^ result asArray
-
-
-
-
+	rewards := rewards asArray.
+	^ rewards
 
 
 
@@ -168,10 +165,22 @@ RL >> startState [
 ]
 
 { #category : #visualization }
+RL >> visualize [
+	| c s |
+	c := startState visualize.
+	path do: [ :p |
+		s := RSCircle new size: 5; color: Color blue lighter lighter.
+		c add: s.
+		s translateTo: p - (0.5 @ 0.5) * 20.
+	].
+	^ c @ RSCanvasController
+]
+
+{ #category : #visualization }
 RL >> visualizeStartState [
 	<inspectorPresentationOrder: 90 title: 'Start state'>
 	
 	^ SpRoassal3InspectorPresenter new
-		canvas: startState visualize;
+		canvas: self visualize;
 		yourself
 ]

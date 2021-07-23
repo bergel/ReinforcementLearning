@@ -136,6 +136,7 @@ RLGrid >> visualize [
 		o = $i ifTrue: [ s color: Color lightYellow ].
 		 ].
 	canvas addAll: shapes.
-	RSGridLayout new lineItemsCount: (self extent x); on: shapes.
+	RSGridLayout new gapSize: 0; lineItemsCount: (self extent x); on: shapes.
+	shapes translateTopLeftTo: 0 @ 0.
 	^ canvas
 ]
