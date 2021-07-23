@@ -9,9 +9,11 @@ Class {
 		'minAlpha',
 		'gamma',
 		'eps',
-		'qTable'
+		'qTable',
+		'rewards',
+		'path'
 	],
-	#category : #ReinforcementLearning
+	#category : #'ReinforcementLearning-Core'
 }
 
 { #category : #running }
@@ -55,6 +57,8 @@ RL >> initialize [
 	gamma := 1.0.
 	eps := 0.2.
 	qTable := Dictionary new.
+	rewards := OrderedCollection new.
+	path := OrderedCollection new
 ]
 
 { #category : #running }

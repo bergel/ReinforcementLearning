@@ -1,7 +1,7 @@
 Class {
 	#name : #RLGridTest,
 	#superclass : #TestCase,
-	#category : #ReinforcementLearning
+	#category : #'ReinforcementLearning-Tests'
 }
 
 { #category : #'test - grid' }
@@ -92,4 +92,14 @@ RLGridTest >> testSetContent [
 	self assert: grid extent equals: 3 @ 3.
 	self assert: grid contentAsString equals: '.zzz....i'.
 	
+]
+
+{ #category : #visualization }
+RLGridTest >> testVisualization01 [
+
+	| g c |
+	g := RLGrid new.
+	c := g visualize.
+	self assert: c class equals: RSCanvas.
+	self assert: c numberOfShapes equals: g contentAsString size
 ]

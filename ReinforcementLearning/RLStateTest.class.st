@@ -1,7 +1,7 @@
 Class {
 	#name : #RLStateTest,
 	#superclass : #TestCase,
-	#category : #ReinforcementLearning
+	#category : #'ReinforcementLearning-Tests'
 }
 
 { #category : #tests }

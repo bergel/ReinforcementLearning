@@ -5,7 +5,7 @@ Class {
 		'grid',
 		'position'
 	],
-	#category : #ReinforcementLearning
+	#category : #'ReinforcementLearning-Core'
 }
 
 { #category : #comparing }

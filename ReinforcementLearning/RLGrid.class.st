@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'content'
 	],
-	#category : #ReinforcementLearning
+	#category : #'ReinforcementLearning-Core'
 }
 
 { #category : #comparing }
@@ -63,19 +63,9 @@ RLGrid >> initialize [
 { #category : #visualization }
 RLGrid >> inspectorCanvas2 [
 	<inspectorPresentationOrder: 90 title: 'Visualization'>
-	| canvas shapes |
-	canvas := RSCanvas new.
-	shapes := RSBox models: (self content flatCollect: #yourself) forEach: [ :s :o |
-		s size: 20.
-		o = $. ifTrue: [ s color: Color veryVeryLightGray ].
-		o = $z ifTrue: [ s color: Color lightRed ].
-		o = $i ifTrue: [ s color: Color lightYellow ].
-		 ].
-	canvas addAll: shapes.
-	RSGridLayout new lineItemsCount: (self extent x); on: shapes.
 	
 	^ SpRoassal3InspectorPresenter new
-		canvas: canvas;
+		canvas: self visualize;
 		yourself
 ]
 
@@ -133,4 +123,19 @@ RLGrid >> setZombies: numberOfZombiesToAdd [
 			self atPosition: pos put: $z.
 			numberOfZombiesLeftToAdd := numberOfZombiesLeftToAdd - 1 ]
 	]
+]
+
+{ #category : #visualization }
+RLGrid >> visualize [
+	| canvas shapes |
+	canvas := RSCanvas new.
+	shapes := RSBox models: (self content flatCollect: #yourself) forEach: [ :s :o |
+		s size: 20.
+		o = $. ifTrue: [ s color: Color veryVeryLightGray ].
+		o = $z ifTrue: [ s color: Color lightRed ].
+		o = $i ifTrue: [ s color: Color lightYellow ].
+		 ].
+	canvas addAll: shapes.
+	RSGridLayout new lineItemsCount: (self extent x); on: shapes.
+	^ canvas
 ]
