@@ -61,7 +61,7 @@ RLGrid >> initialize [
 ]
 
 { #category : #visualization }
-RLGrid >> inspectorCanvas2 [
+RLGrid >> inspectorVisualization [
 	<inspectorPresentationOrder: 90 title: 'Visualization'>
 	
 	^ SpRoassal3InspectorPresenter new

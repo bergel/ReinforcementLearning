@@ -4,7 +4,7 @@ Class {
 	#category : #'ReinforcementLearning-Tests'
 }
 
-{ #category : #tests }
+{ #category : #equality }
 RLStateTest >> testDictionary [
 	| s1 s2 s3 grid d |
 	grid := RLGrid new.
@@ -20,7 +20,7 @@ RLStateTest >> testDictionary [
 
 ]
 
-{ #category : #tests }
+{ #category : #equality }
 RLStateTest >> testEquals01 [
 	| s1 s2 |
 	s1 := RLState new.
@@ -28,7 +28,7 @@ RLStateTest >> testEquals01 [
 	self assert: s1 = s2.
 ]
 
-{ #category : #tests }
+{ #category : #equality }
 RLStateTest >> testEquals02 [
 	| s1 s2 s3 grid |
 	grid := RLGrid new.
@@ -43,7 +43,7 @@ RLStateTest >> testEquals02 [
 	self assert: s3 asString ~= s1 asString.
 ]
 
-{ #category : #tests }
+{ #category : #equality }
 RLStateTest >> testEquals03 [
 	| s1 s2 s3 grid |
 	grid := RLGrid new.
@@ -60,4 +60,74 @@ RLStateTest >> testEquals03 [
 	
 	self assert: s1 asString = s2 asString.
 	self assert: s3 asString ~= s1 asString.
+]
+
+{ #category : #'car position' }
+RLStateTest >> testInitialCarPosition [
+
+	| s |
+	s := RLState new.
+	self assert: s position equals: 1 @ 1
+]
+
+{ #category : #'car position' }
+RLStateTest >> testInitialCarPosition02 [
+
+	| s |
+	s := RLState new.
+	s position: 6 @ 100.
+	self assert: s position equals: 6 @ 100
+]
+
+{ #category : #'car position' }
+RLStateTest >> testInitialCarPosition03 [
+
+	| s |
+	s := RLState new.
+	s grid: (RLGrid new).
+	s position: 1 @ 2.
+	self assert: s position equals: 1 @ 2
+]
+
+{ #category : #visualization }
+RLStateTest >> testVisualize01 [
+
+	| s c |
+	s := RLState new.
+	c := s visualize.
+	self assert: c class equals: RSCanvas.
+	self assert: c numberOfShapes equals: 1.
+	self assert: c shapes first class equals: RSLabel
+]
+
+{ #category : #visualization }
+RLStateTest >> testVisualize02 [
+
+	| s c |
+	s := RLState new.
+	c := s visualize.
+	self assert: c class equals: RSCanvas.
+	self assert: c numberOfShapes equals: 1.
+	self assert: c shapes first class equals: RSLabel
+]
+
+{ #category : #visualization }
+RLStateTest >> testVisualize03 [
+
+	| s c |
+	s := RLState new.
+	s grid: RLGrid new.
+	c := s visualize.
+	self assert: c class equals: RSCanvas.
+	self assert: c numberOfShapes equals: 5.
+]
+
+{ #category : #visualization }
+RLStateTest >> testVisualize04 [
+
+	| s c |
+	s := RLState new grid: (RLGrid new setContent: '.zz....zi').
+	c := s visualize.
+	self assert: c class equals: RSCanvas.
+	self assert: c numberOfShapes equals: 10.
 ]

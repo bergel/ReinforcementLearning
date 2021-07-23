@@ -166,3 +166,12 @@ RL >> setInitialGrid: aGrid [
 RL >> startState [
 	^ startState
 ]
+
+{ #category : #visualization }
+RL >> visualizeStartState [
+	<inspectorPresentationOrder: 90 title: 'Start state'>
+	
+	^ SpRoassal3InspectorPresenter new
+		canvas: startState visualize;
+		yourself
+]
