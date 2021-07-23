@@ -8,14 +8,14 @@ Class {
 RLExample >> exampleZombie [
 	<script: 'self new exampleZombie'>
 
-	| grid actionUP actionDown actionLeft actionRight actions startState newCarPos act r numberOfEpisodes maxEpisodeSteps minAlpha alphas gamma eps qTable q chooseAction currentState totalReward alpha isDone currentAction tt nextState currentReward |
-	grid := RLGrid new setContent: 'i.zc'.
+	| grid actionUP actionDown actionLeft actionRight actions startState newCarPos act r numberOfEpisodes maxEpisodeSteps minAlpha alphas gamma eps qTable q chooseAction currentState totalReward alpha isDone currentAction tt nextState currentReward result |
+	grid := RLGrid new setContent:  '.z.i'.
 	actionUP := 1.
 	actionDown := 2.
 	actionLeft := 3.
 	actionRight := 4.
 	actions := { actionUP . actionDown . actionLeft . actionRight }.
-	startState := RLState new grid: grid; position: 2 @ 2.
+	startState := RLState new grid: grid; position: 1 @ 1.
 	newCarPos := [ :aState :action |
 		"return a new position"
 		| delta |
@@ -59,6 +59,7 @@ RLExample >> exampleZombie [
 			ifFalse: [ (q value: state value: nil) argmax ]
 		 ].
 
+	result := OrderedCollection new.
 	1 to: numberOfEpisodes do: [ :e |
 		currentState := startState.
 		totalReward := 0.
@@ -78,8 +79,10 @@ RLExample >> exampleZombie [
 				currentState := nextState
 			]
 		].
-		Transcript show: ('Episode {1}: total reward -> {2}' format: { e . totalReward }); cr
+		Transcript show: ('Episode {1}: total reward -> {2}' format: { e . totalReward }); cr.
+		result add: totalReward.
 	].
+	^ result asArray
 
 
 
@@ -98,14 +101,14 @@ RLExample >> exampleZombie [
 RLExample >> exampleZombie02 [
 	<script: 'self new exampleZombie02'>
 
-	| grid actionUP actionDown actionLeft actionRight actions startState newCarPos act r numberOfEpisodes maxEpisodeSteps minAlpha alphas gamma eps qTable q chooseAction currentState totalReward alpha isDone currentAction tt nextState currentReward |
-	grid := RLGrid new setContent: '.zzz....i'.
+	| grid actionUP actionDown actionLeft actionRight actions startState newCarPos act r numberOfEpisodes maxEpisodeSteps minAlpha alphas gamma eps qTable q chooseAction currentState totalReward alpha isDone currentAction tt nextState currentReward result |
+	grid := RLGrid new setContent: '.zz....zi'.
 	actionUP := 1.
 	actionDown := 2.
 	actionLeft := 3.
 	actionRight := 4.
 	actions := { actionUP . actionDown . actionLeft . actionRight }.
-	startState := RLState new grid: grid; position: 2 @ 2.
+	startState := RLState new grid: grid; position: 1 @ 1.
 	newCarPos := [ :aState :action |
 		"return a new position"
 		| delta |
@@ -149,6 +152,7 @@ RLExample >> exampleZombie02 [
 			ifFalse: [ (q value: state value: nil) argmax ]
 		 ].
 
+	result := OrderedCollection new.
 	1 to: numberOfEpisodes do: [ :e |
 		currentState := startState.
 		totalReward := 0.
@@ -168,18 +172,9 @@ RLExample >> exampleZombie02 [
 				currentState := nextState
 			]
 		].
-		Transcript show: ('Episode {1}: total reward -> {2}' format: { e . totalReward }); cr
+		Transcript show: ('Episode {1}: total reward -> {2}' format: { e . totalReward }); cr.
+		result add: totalReward.
 	].
-
-
-
-self halt.
-
-
-
-
-
-
-
+	^ result asArray
 
 ]

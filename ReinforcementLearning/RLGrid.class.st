@@ -60,6 +60,25 @@ RLGrid >> initialize [
 	self setSize: 2
 ]
 
+{ #category : #visualization }
+RLGrid >> inspectorCanvas2 [
+	<inspectorPresentationOrder: 90 title: 'Visualization'>
+	| canvas shapes |
+	canvas := RSCanvas new.
+	shapes := RSBox models: (self content flatCollect: #yourself) forEach: [ :s :o |
+		s size: 20.
+		o = $. ifTrue: [ s color: Color veryVeryLightGray ].
+		o = $z ifTrue: [ s color: Color lightRed ].
+		o = $i ifTrue: [ s color: Color lightYellow ].
+		 ].
+	canvas addAll: shapes.
+	RSGridLayout new lineItemsCount: (self extent x); on: shapes.
+	
+	^ SpRoassal3InspectorPresenter new
+		canvas: canvas;
+		yourself
+]
+
 { #category : #accessing }
 RLGrid >> numberOfZombies [
 	^ ((content flatCollect: #yourself) select: [ :c | c = $z ]) size
