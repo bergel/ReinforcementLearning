@@ -61,6 +61,29 @@ RL >> initialize [
 	path := OrderedCollection new
 ]
 
+{ #category : #visualization }
+RL >> inspectorReward [
+	<inspectorPresentationOrder: 90 title: 'Reward'>
+	
+	^ SpRoassal3InspectorPresenter new
+		canvas: self visualizeReward;
+		yourself
+]
+
+{ #category : #visualization }
+RL >> inspectorStartState [
+	<inspectorPresentationOrder: 90 title: 'Start state'>
+	
+	^ SpRoassal3InspectorPresenter new
+		canvas: self visualize;
+		yourself
+]
+
+{ #category : #visualization }
+RL >> inspectorStartStateContext: aContext [
+	aContext withoutEvaluator
+]
+
 { #category : #running }
 RL >> newCar: state action: action [
 	"Return the new position of a car, as a point. The action is a number from 1 to 4.
@@ -80,17 +103,20 @@ RL >> numberOfEpisodes: aNumber [
 { #category : #playing }
 RL >> play [
 	"Return the position of the car"
-	| currentState isDone actions tupple |
+	| currentState isDone actions tupple maxNumberOfSteps numberOfSteps |
 	currentState := startState.
 	isDone := false.
 	path := OrderedCollection new.
 	path add: currentState position.
-	[ isDone ] whileFalse: [
+	maxNumberOfSteps := 100.
+	numberOfSteps := 0.
+	[ isDone not and: [ numberOfSteps < maxNumberOfSteps ] ] whileTrue: [
 		actions := self qState: currentState.
 		tupple := self act: currentState action: actions argmax.
 		currentState := tupple first.
 		path add: currentState position.
 		isDone := tupple third.
+		numberOfSteps := numberOfSteps + 1.
 	].
 	
 	^ path asArray
@@ -177,10 +203,22 @@ RL >> visualize [
 ]
 
 { #category : #visualization }
-RL >> visualizeStartState [
-	<inspectorPresentationOrder: 90 title: 'Start state'>
-	
-	^ SpRoassal3InspectorPresenter new
-		canvas: self visualize;
-		yourself
+RL >> visualizeReward [
+	| c plot |
+	c := RSChart new.
+	plot := RSLinePlot new.
+	plot y: rewards.
+	c addPlot: plot.
+	c addDecoration: (RSChartTitleDecoration new title: 'Reward evolution'; fontSize: 20).
+	c xlabel: 'Episode' offset: 0 @ 10.
+	c ylabel: 'Reward' offset: -20 @ 0.
+	c addDecoration: (RSHorizontalTick new).
+	c addDecoration: (RSVerticalTick new).
+	c build.
+	^ c canvas
+]
+
+{ #category : #visualization }
+RL >> visualizeRewardContext: aContext [
+	aContext withoutEvaluator
 ]
