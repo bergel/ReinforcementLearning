@@ -10,8 +10,9 @@ BaselineOfReinforcementLearning >> baseline: spec [
 
 	spec for: #'common' do: [
 		spec 
-			package: #'ReinforcementLearning'.
+			package: #'ReinforcementLearning';
+			baseline: 'Roassal3' with: [ spec repository: 'github://ObjectProfile/Roassal3/src'; loads: #('Full') ].
 		spec 
-			group: 'default' with: #('ReinforcementLearning' ). ].
+			group: 'default' with: #(''Roassal3'' 'ReinforcementLearning' ). ].
 
 ]
