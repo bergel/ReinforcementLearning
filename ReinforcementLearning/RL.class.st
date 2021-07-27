@@ -92,6 +92,11 @@ RL >> inspectorStartStateContext: aContext [
 	aContext withoutEvaluator
 ]
 
+{ #category : #accessing }
+RL >> maxEpisodeSteps: anInteger [
+	maxEpisodeSteps := anInteger 
+]
+
 { #category : #running }
 RL >> newCar: state action: action [
 	"Return the new position of a car, as a point. The action is a number from 1 to 4.
