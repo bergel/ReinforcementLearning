@@ -70,12 +70,31 @@ RL >> initialize [
 ]
 
 { #category : #visualization }
+RL >> inspectorQTable [
+	<inspectorPresentationOrder: 90 title: 'QTable'>
+	
+	^ SpRoassal3InspectorPresenter new
+		canvas: self visualizeQTable;
+		yourself
+]
+
+{ #category : #visualization }
+RL >> inspectorQTableContext: aContext [
+	aContext withoutEvaluator
+]
+
+{ #category : #visualization }
 RL >> inspectorReward [
 	<inspectorPresentationOrder: 90 title: 'Reward'>
 	
 	^ SpRoassal3InspectorPresenter new
 		canvas: self visualizeReward;
 		yourself
+]
+
+{ #category : #visualization }
+RL >> inspectorRewardContext: aContext [
+	aContext withoutEvaluator
 ]
 
 { #category : #visualization }
@@ -216,6 +235,36 @@ RL >> visualize [
 ]
 
 { #category : #visualization }
+RL >> visualizeQTable [
+	| c state values allBoxes sortedAssociations |
+	c := RSCanvas new.
+	
+	c add: (RSLabel text: 'State').
+	c add: (RSLabel text: '^').
+	c add: (RSLabel text: 'V').
+	c add: (RSLabel text: '<').
+	c add: (RSLabel text: '>').
+	
+	sortedAssociations := qTable associations reverseSortedAs: [ :assoc | assoc value average ].
+	sortedAssociations do: [ :assoc |
+		state := RSLabel model: assoc key.
+		values := RSBox 
+						models: (assoc value collect: [ :v | v round: 2 ]) 
+						forEach: [ :s :m | s extent: 40 @ 20 ].
+		c add: state.
+		c addAll: values.
+	].
+	RSCellLayout new lineItemsCount: 5; gapSize: 1; on: c shapes.
+	allBoxes := c shapes select: [ :s | s class == RSBox ].
+	RSNormalizer color
+		shapes: allBoxes;
+		from: Color red; to: Color green;
+		normalize.
+	allBoxes @ RSLabeled middle.
+	^ c @ RSCanvasController
+]
+
+{ #category : #visualization }
 RL >> visualizeReward [
 	| c plot |
 	c := RSChart new.
@@ -229,9 +278,4 @@ RL >> visualizeReward [
 	c addDecoration: (RSVerticalTick new).
 	c build.
 	^ c canvas
-]
-
-{ #category : #visualization }
-RL >> visualizeRewardContext: aContext [
-	aContext withoutEvaluator
 ]
