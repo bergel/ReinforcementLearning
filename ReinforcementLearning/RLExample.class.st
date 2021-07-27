@@ -4,7 +4,7 @@ Class {
 	#category : #'ReinforcementLearning-Core'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #raw }
 RLExample >> exampleZombie [
 	<script: 'self new exampleZombie'>
 
@@ -97,7 +97,7 @@ RLExample >> exampleZombie [
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #raw }
 RLExample >> exampleZombie02 [
 	<script: 'self new exampleZombie02'>
 
@@ -177,4 +177,18 @@ RLExample >> exampleZombie02 [
 	].
 	^ result asArray
 
+]
+
+{ #category : #raw }
+RLExample >> simple [
+	<script: 'self new simple inspect'>
+
+	| rl |
+	rl := RL new setInitialGrid: (RLGrid new setSize: 8; setZombies: 10; setIceCreamBottomRight).
+	rl numberOfEpisodes: 500.
+	rl epsilon: 0.1.
+	rl run.
+
+	rl play.
+	^ rl
 ]
