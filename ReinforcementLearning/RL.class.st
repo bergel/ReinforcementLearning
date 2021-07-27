@@ -8,10 +8,10 @@ Class {
 		'maxEpisodeSteps',
 		'minAlpha',
 		'gamma',
-		'eps',
 		'qTable',
 		'rewards',
-		'path'
+		'path',
+		'epsilon'
 	],
 	#category : #'ReinforcementLearning-Core'
 }
@@ -41,10 +41,18 @@ RL >> actions [
 
 { #category : #running }
 RL >> chooseAction: state [
-	^ r next < eps
+	^ r next < epsilon
 		ifTrue: [ self actions atRandom: r ]
-		ifFalse: [ (self qState: state) argmax ]
+		ifFalse: [ 
+			"Return the best action"
+			(self qState: state) argmax ]
 
+]
+
+{ #category : #accessing }
+RL >> epsilon: aFloat [
+	"Set the probability to explore the world. The argument is between 0.0 and 1.0"
+	epsilon := aFloat
 ]
 
 { #category : #initialization }
@@ -55,7 +63,7 @@ RL >> initialize [
 	maxEpisodeSteps := 100.
 	minAlpha := 0.02.
 	gamma := 1.0.
-	eps := 0.2.
+	epsilon := 0.2.
 	qTable := Dictionary new.
 	rewards := OrderedCollection new.
 	path := OrderedCollection new
