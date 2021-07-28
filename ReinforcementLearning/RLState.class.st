@@ -28,7 +28,7 @@ RLState >> grid: aGrid [
 
 { #category : #comparing }
 RLState >> hash [
-	^ (grid asString, position asString) hash
+	^ grid hash bitXor: position hash
 ]
 
 { #category : #initialization }
