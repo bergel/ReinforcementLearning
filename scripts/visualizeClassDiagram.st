@@ -19,7 +19,7 @@ uml := RSUMLClassBuilder new.
 uml classes: (RPackageOrganizer default packageNamed: packageName) definedClasses.
 uml build.
 
-m canvas extent: 1000 @ 1000.
+uml canvas extent: 1000 @ 1000.
 RSPNGExporter new
 	canvas: uml canvas;
 	exportToFile: 'uml.png' asFileReference.
