@@ -5,11 +5,23 @@ Class {
 }
 
 { #category : #raw }
+RLExample >> example01 [
+	<script: 'self new example01 inspect'>
+	
+	| rl |
+	rl := RL new.
+	rl setInitialGrid: (RLGrid new setSize: 5; setMonsters: 2).
+	rl epsilon: 0.01.
+	rl run.
+	^ rl
+]
+
+{ #category : #raw }
 RLExample >> exampleZombie [
 	<script: 'self new exampleZombie'>
 
 	| grid actionUP actionDown actionLeft actionRight actions startState newCarPos act r numberOfEpisodes maxEpisodeSteps minAlpha alphas gamma eps qTable q chooseAction currentState totalReward alpha isDone currentAction tt nextState currentReward result |
-	grid := RLGrid new setContent:  '.z.i'.
+	grid := RLGrid new setContent:  '.m.e'.
 	actionUP := 1.
 	actionDown := 2.
 	actionLeft := 3.
@@ -28,12 +40,11 @@ RLExample >> exampleZombie [
 		p := newCarPos value: aState value: action.
 		gridItem := aState grid atPosition: p.
 		newGrid := aState grid copy.
-		gridItem = $z ifTrue: [ reward := -100. tDone := true ].
-		gridItem = $i ifTrue: [ reward := 1000. tDone := true ].
+		gridItem = $m ifTrue: [ reward := -100. tDone := true ].
+		gridItem = $e ifTrue: [ reward := 1000. tDone := true ].
 		gridItem = $. ifTrue: [ reward := -1. tDone := false. 
 			newGrid atPosition: aState position put: $. .
 			newGrid atPosition: p put: $c ].
-		gridItem = $c ifTrue: [ reward := -1. tDone := false ].
 		{ RLState new grid: newGrid; position: p . reward . tDone }
 	].
 

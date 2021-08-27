@@ -70,7 +70,7 @@ RL >> initialize [
 	stateConnections := OrderedCollection new.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #visualization }
 RL >> inspectorGraph [
 	<inspectorPresentationOrder: 90 title: 'State graph'>
 	
@@ -79,7 +79,7 @@ RL >> inspectorGraph [
 		yourself
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #visualization }
 RL >> inspectorGraphContext: aContext [
 	aContext withoutEvaluator
 ]
@@ -98,7 +98,7 @@ RL >> inspectorQTableContext: aContext [
 	aContext withoutEvaluator
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #visualization }
 RL >> inspectorResult [
 	<inspectorPresentationOrder: 90 title: 'Result'>
 	
@@ -107,7 +107,7 @@ RL >> inspectorResult [
 		yourself
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #visualization }
 RL >> inspectorResultContext: aContext [
 	aContext withoutEvaluator
 ]
@@ -140,7 +140,7 @@ RL >> inspectorStartStateContext: aContext [
 	aContext withoutEvaluator
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #visualization }
 RL >> inspectorWeightedGraph [
 	<inspectorPresentationOrder: 90 title: 'Weighted state graph'>
 	
@@ -149,7 +149,7 @@ RL >> inspectorWeightedGraph [
 		yourself
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #visualization }
 RL >> inspectorWeightedGraphContext: aContext [
 	aContext withoutEvaluator
 ]
@@ -160,7 +160,7 @@ RL >> maxEpisodeSteps: anInteger [
 	maxEpisodeSteps := anInteger 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 RL >> moveKnight: state action: action [
 	"Return the new position of a car, as a point. The action is a number from 1 to 4.
 	return a new position"
@@ -283,7 +283,7 @@ RL >> visualize [
 	^ c @ RSCanvasController
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #visualization }
 RL >> visualizeGraph [
 	| s allStates d m |
 	s := stateConnections asSet asArray.
@@ -331,7 +331,7 @@ RL >> visualizeQTable [
 	^ c @ RSCanvasController
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #visualization }
 RL >> visualizeResult [
 	"Assume that the method play was previously invoked"
 	| c s |
@@ -361,7 +361,7 @@ RL >> visualizeReward [
 	^ c canvas
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #visualization }
 RL >> visualizeWeightedGraph [
 	| s allStates d m |
 	s := stateConnections asSet asArray.
