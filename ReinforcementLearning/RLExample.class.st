@@ -42,9 +42,9 @@ RLExample >> exampleZombie [
 		newGrid := aState grid copy.
 		gridItem = $m ifTrue: [ reward := -100. tDone := true ].
 		gridItem = $e ifTrue: [ reward := 1000. tDone := true ].
-		gridItem = $. ifTrue: [ reward := -1. tDone := false. 
-			newGrid atPosition: aState position put: $. .
-			newGrid atPosition: p put: $c ].
+		gridItem = $. ifTrue: [ reward := -1. tDone := false. ].
+		aState position = p ifTrue: [ reward := -1. tDone := false. ]. 
+
 		{ RLState new grid: newGrid; position: p . reward . tDone }
 	].
 
