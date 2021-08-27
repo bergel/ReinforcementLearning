@@ -9,7 +9,8 @@ Class {
 
 { #category : #comparing }
 RLGrid >> = anotherObject [
-	anotherObject class ~= self class ifTrue: [ ^ false ].
+	"Return true if anotherObject is the same map than myself"
+	anotherObject class == self class ifFalse: [ ^ false ].
 	^ content = anotherObject content
 ]
 
@@ -25,16 +26,19 @@ RLGrid >> at: y at: x put: aValue [
 
 { #category : #accessing }
 RLGrid >> atPosition: aPoint [
-	^ self at: aPoint y at: aPoint x
+	"Return the character located at a given position"
+	^ (content at: aPoint y) at: aPoint x
 ]
 
 { #category : #accessing }
-RLGrid >> atPosition: aPoint put: aValue [
-	^ self at: aPoint y at: aPoint x put: aValue
+RLGrid >> atPosition: aPoint put: aCharacter [
+	"Set the aCharacter (value of a cell map) at a given position"
+	^ (content at: aPoint y) at: aPoint x put: aCharacter
 ]
 
 { #category : #accessing }
 RLGrid >> content [
+	"Return the grid content, as an array of array of characters"
 	^ content
 ]
 
@@ -45,12 +49,13 @@ RLGrid >> contentAsString [
 
 { #category : #accessing }
 RLGrid >> extent [
-	"Return a point"
+	"Return a point that represents the extent of the grid"
 	^ content first size @ content size 
 ]
 
 { #category : #comparing }
 RLGrid >> hash [
+	"The hash of a grid is the hash of its content"
 	^ content hash
 ]
 
@@ -63,9 +68,11 @@ RLGrid >> initialize [
 { #category : #visualization }
 RLGrid >> inspectorVisualization [
 	<inspectorPresentationOrder: 90 title: 'Visualization'>
-	
+	| canvas |
+	canvas := self visualize.
+	canvas @ RSCanvasController.
 	^ SpRoassal3InspectorPresenter new
-		canvas: self visualize;
+		canvas: canvas;
 		yourself
 ]
 
@@ -76,6 +83,7 @@ RLGrid >> numberOfZombies [
 
 { #category : #copying }
 RLGrid >> postCopy [
+	"A grid must be properly copied"
 	super postCopy.
 	content := content copy
 ]
@@ -99,16 +107,42 @@ RLGrid >> setContent: aContentAsString [
 			index := index + 1 ] ]
 ]
 
+{ #category : #'as yet unclassified' }
+RLGrid >> setExitBottomRight [
+	"Set the exit position at the bottom right of the grid"
+	self atPosition: self extent put: $e
+]
+
 { #category : #initialization }
 RLGrid >> setIceCreamBottomRight [
 	self atPosition: self extent put: $i
 ]
 
+{ #category : #'as yet unclassified' }
+RLGrid >> setMonsters: numberOfMonstersToAdd [
+	| random leftMonsters s pos nbTries |
+	random := Random seed: 42.
+	leftMonsters := numberOfMonstersToAdd.
+	nbTries := 0.
+	s := self extent.
+	[ leftMonsters > 0 ] whileTrue: [ 
+		pos := (random nextInteger: s x ) @ (random nextInteger: s y).
+		(self atPosition: pos) = $. 
+			ifTrue: [ 
+				nbTries := 0.
+				self atPosition: pos put: $m.
+				leftMonsters := leftMonsters - 1 ]
+			ifFalse: [ 
+				nbTries := nbTries + 1. 
+				nbTries > 5 ifTrue: [ ^ self ] ]
+	]
+]
+
 { #category : #initialization }
 RLGrid >> setSize: anInteger [
-	"Set the grid as a square of size anInteger"
-	content := (1 to: anInteger) collect: [ :notUsed | Array new: anInteger withAll: $. ] as: Array
-	
+	"Set the grid as a square of size anInteger, containing the character $."
+	content := (1 to: anInteger) collect: [ :notUsed | Array new: anInteger withAll: $. ] as: Array.
+	self setExitBottomRight.
 ]
 
 { #category : #initialization }
@@ -132,8 +166,8 @@ RLGrid >> visualize [
 	shapes := RSBox models: (self content flatCollect: #yourself) forEach: [ :s :o |
 		s size: 20.
 		o = $. ifTrue: [ s color: Color veryVeryLightGray ].
-		o = $z ifTrue: [ s color: Color lightRed ].
-		o = $i ifTrue: [ s color: Color lightYellow ].
+		o = $m ifTrue: [ s color: Color lightRed ].
+		o = $e ifTrue: [ s color: Color lightYellow ].
 		 ].
 	canvas addAll: shapes.
 	RSGridLayout new gapSize: 0; lineItemsCount: (self extent x); on: shapes.

@@ -94,21 +94,10 @@ RLStateTest >> testVisualize01 [
 
 	| s c |
 	s := RLState new.
+	s grid: (RLGrid new).
 	c := s visualize.
 	self assert: c class equals: RSCanvas.
-	self assert: c numberOfShapes equals: 1.
-	self assert: c shapes first class equals: RSLabel
-]
-
-{ #category : #visualization }
-RLStateTest >> testVisualize02 [
-
-	| s c |
-	s := RLState new.
-	c := s visualize.
-	self assert: c class equals: RSCanvas.
-	self assert: c numberOfShapes equals: 1.
-	self assert: c shapes first class equals: RSLabel
+	self assert: c numberOfShapes equals: 5.
 ]
 
 { #category : #visualization }

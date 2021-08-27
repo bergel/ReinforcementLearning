@@ -8,7 +8,7 @@ Class {
 RLTest >> testEngine [
 
 	| result grid rl |
-	grid := RLGrid new setContent:  '.z.i'.
+	grid := RLGrid new setContent:  '.m.e'.
 	rl := RL new setInitialGrid: grid.
 	result := rl run.
 	self assert: result equals: #(-104 997 999 999 999 999 998 999 999 998 999 999 999 999 999 998 998 -100 999 997).
@@ -20,7 +20,7 @@ RLTest >> testEngine [
 RLTest >> testEngine02 [
 
 	| result rl |
-	rl := RL new setInitialGrid: (RLGrid new setContent: '.zz....zi').
+	rl := RL new setInitialGrid: (RLGrid new setContent: '.mm....me').
 	rl numberOfEpisodes: 50.
 	result := rl run.
 	

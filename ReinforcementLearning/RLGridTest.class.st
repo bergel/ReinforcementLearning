@@ -11,7 +11,7 @@ RLGridTest >> testContent [
 	g := RLGrid new.
 	cc := g content flatCollect: #yourself.
 	self assert: cc size equals: 4.
-	self assert: cc equals: (Array new: 4 withAll: $.)
+	self assert: cc equals: #($. $. $. $e)
 ]
 
 { #category : #'test - grid' }
@@ -51,7 +51,7 @@ RLGridTest >> testGridPrinting [
 	g := RLGrid new.
 	self assert: g printString equals:
 '..
-..
+.e
 '
 ]
 

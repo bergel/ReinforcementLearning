@@ -8,29 +8,29 @@ Class {
 		'maxEpisodeSteps',
 		'minAlpha',
 		'gamma',
+		'epsilon',
 		'qTable',
 		'rewards',
 		'path',
-		'epsilon'
+		'stateConnections'
 	],
 	#category : #'ReinforcementLearning-Core'
 }
 
 { #category : #running }
 RL >> act: aState action: action [
-	| reward newGrid p gridItem isDone |
-	p := self newCar: aState action: action.
+	"Produce a new tuple {stable . reward . isDone}"
+	| reward newGrid p gridItem isDone newState |
+	p := self moveKnight: aState action: action.
 	gridItem := aState grid atPosition: p.
 	newGrid := aState grid copy.
-	gridItem = $z ifTrue: [ reward := -100. isDone := true ].
-	gridItem = $i ifTrue: [ reward := 1000. isDone := true ].
-	('zi' includes: gridItem) ifFalse: [ reward := -1. isDone := false ].
-"	gridItem = $. ifTrue: [ reward := -1. isDone := false. 
-		newGrid atPosition: aState position put: $. .
-		newGrid atPosition: p put: $c ].
-	gridItem = $c ifTrue: [ reward := -1. isDone := false ]."
-	^ { RLState new grid: newGrid; position: p . reward . isDone }
-
+	gridItem = $m ifTrue: [ reward := -100. isDone := true ].
+	gridItem = $e ifTrue: [ reward := 1000. isDone := true ].
+	('me' includes: gridItem) 
+		ifFalse: [ reward := -1. isDone := false ].
+	newState := RLState new grid: newGrid; position: p.
+	stateConnections add: aState -> newState.
+	^ { newState . reward . isDone }
 ]
 
 { #category : #actions }
@@ -41,17 +41,17 @@ RL >> actions [
 
 { #category : #running }
 RL >> chooseAction: state [
+	"Choose an action for a given state"
 	^ r next < epsilon
 		ifTrue: [ self actions atRandom: r ]
 		ifFalse: [ 
 			"Return the best action"
 			(self qState: state) argmax ]
-
 ]
 
 { #category : #accessing }
 RL >> epsilon: aFloat [
-	"Set the probability to explore the world. The argument is between 0.0 and 1.0"
+	"Set the probability to explore the world. The argument is between 0.0 and 1.0. A value close to 0.0 favors choosing an action that we know is a good one (thus reducing the exploration of the grid). A value close to 1.0 favors the world exploration instead."
 	epsilon := aFloat
 ]
 
@@ -66,7 +66,22 @@ RL >> initialize [
 	epsilon := 0.2.
 	qTable := Dictionary new.
 	rewards := OrderedCollection new.
-	path := OrderedCollection new
+	path := OrderedCollection new.
+	stateConnections := OrderedCollection new.
+]
+
+{ #category : #'as yet unclassified' }
+RL >> inspectorGraph [
+	<inspectorPresentationOrder: 90 title: 'State graph'>
+	
+	^ SpRoassal3InspectorPresenter new
+		canvas: self visualizeGraph;
+		yourself
+]
+
+{ #category : #'as yet unclassified' }
+RL >> inspectorGraphContext: aContext [
+	aContext withoutEvaluator
 ]
 
 { #category : #visualization }
@@ -80,6 +95,20 @@ RL >> inspectorQTable [
 
 { #category : #visualization }
 RL >> inspectorQTableContext: aContext [
+	aContext withoutEvaluator
+]
+
+{ #category : #'as yet unclassified' }
+RL >> inspectorResult [
+	<inspectorPresentationOrder: 90 title: 'Result'>
+	
+	^ SpRoassal3InspectorPresenter new
+		canvas: self visualizeResult;
+		yourself
+]
+
+{ #category : #'as yet unclassified' }
+RL >> inspectorResultContext: aContext [
 	aContext withoutEvaluator
 ]
 
@@ -111,9 +140,34 @@ RL >> inspectorStartStateContext: aContext [
 	aContext withoutEvaluator
 ]
 
+{ #category : #'as yet unclassified' }
+RL >> inspectorWeightedGraph [
+	<inspectorPresentationOrder: 90 title: 'Weighted state graph'>
+	
+	^ SpRoassal3InspectorPresenter new
+		canvas: self visualizeWeightedGraph;
+		yourself
+]
+
+{ #category : #'as yet unclassified' }
+RL >> inspectorWeightedGraphContext: aContext [
+	aContext withoutEvaluator
+]
+
 { #category : #accessing }
 RL >> maxEpisodeSteps: anInteger [
+	"Indicate how long an exploration can be"
 	maxEpisodeSteps := anInteger 
+]
+
+{ #category : #'as yet unclassified' }
+RL >> moveKnight: state action: action [
+	"Return the new position of a car, as a point. The action is a number from 1 to 4.
+	return a new position"
+	| delta |
+	delta := { 0@ -1 . 0@1 . -1@0 . 1@0 } 
+				at: action ifAbsent: [ self error: 'Unknown action' ].
+	^ ((state position + delta) min: state grid extent) max: 1 @ 1
 ]
 
 { #category : #running }
@@ -129,13 +183,14 @@ RL >> newCar: state action: action [
 
 { #category : #accessing }
 RL >> numberOfEpisodes: aNumber [
+	"Set the number of exploration we need to perform"
 	numberOfEpisodes := aNumber
 ]
 
 { #category : #playing }
 RL >> play [
 	"Return the position of the car"
-	| currentState isDone actions tupple maxNumberOfSteps numberOfSteps |
+	| currentState isDone actions tuple maxNumberOfSteps numberOfSteps |
 	currentState := startState.
 	isDone := false.
 	path := OrderedCollection new.
@@ -144,33 +199,34 @@ RL >> play [
 	numberOfSteps := 0.
 	[ isDone not and: [ numberOfSteps < maxNumberOfSteps ] ] whileTrue: [
 		actions := self qState: currentState.
-		tupple := self act: currentState action: actions argmax.
-		currentState := tupple first.
+		tuple := self act: currentState action: actions argmax.
+		currentState := tuple first.
 		path add: currentState position.
-		isDone := tupple third.
+		isDone := tuple third.
 		numberOfSteps := numberOfSteps + 1.
 	].
 	
 	^ path asArray
-	
 ]
 
 { #category : #running }
 RL >> qState: state [ 
-	qTable at: state ifAbsentPut: [ (1 to: self actions size) collect: [ :nU | 0 ] ].
+	"Return the rewards associated to a state. If the state is not in the qTable, we create it"
+	qTable at: state ifAbsentPut: [ Array new: self actions size withAll: 0 ].
 	^ qTable at: state
 ]
 
 { #category : #running }
 RL >> qState: state action: action [
+	"For a particular state, return the reward of an action. If the state is not in the qTable, we create it"
 	qTable at: state ifAbsentPut: [ (1 to: self actions size) collect: [ :nU | 0 ] ].
 	^ (qTable at: state) at: action
 ]
 
 { #category : #running }
 RL >> run [
-
-	| alphas currentState totalReward alpha isDone currentAction tupple nextState currentReward |
+	"This method is the core of the Q-learning algorithm"
+	| alphas currentState totalReward alpha isDone currentAction tuple nextState currentReward |
 	alphas := (minAlpha to: 1.0 count: numberOfEpisodes) reversed.
 	rewards := OrderedCollection new.
 	1 to: numberOfEpisodes do: [ :e |
@@ -181,12 +237,13 @@ RL >> run [
 		maxEpisodeSteps timesRepeat: [ 
 			isDone ifFalse: [ 
 				currentAction := self chooseAction: currentState.
-				tupple := self act: currentState action: currentAction.
-				nextState := tupple first.
-				currentReward := tupple second.
-				isDone := tupple third.
+				tuple := self act: currentState action: currentAction.
+				nextState := tuple first.
+				currentReward := tuple second.
+				isDone := tuple third.
 				totalReward := totalReward + currentReward.
 				
+				"The Bellman equation"
 				(self qState: currentState) at: currentAction put: (
 					(self qState: currentState action: currentAction) + (alpha * (currentReward + (gamma * (self qState: nextState) max) - (self qState: currentState action: currentAction)))).
 				currentState := nextState
@@ -196,14 +253,6 @@ RL >> run [
 	].
 	rewards := rewards asArray.
 	^ rewards
-
-
-
-
-
-
-
-
 ]
 
 { #category : #initialization }
@@ -213,8 +262,8 @@ RL >> setInitialContent: aString [
 
 { #category : #initialization }
 RL >> setInitialGrid: aGrid [
-	startState := RLState new grid: aGrid; position: 1 @ 1.
-
+	"Set the grid used in the initial state"
+	startState := RLState new grid: aGrid
 ]
 
 { #category : #accessing }
@@ -232,6 +281,24 @@ RL >> visualize [
 		s translateTo: p - (0.5 @ 0.5) * 20.
 	].
 	^ c @ RSCanvasController
+]
+
+{ #category : #'as yet unclassified' }
+RL >> visualizeGraph [
+	| s allStates d m |
+	s := stateConnections asSet asArray.
+	d := Dictionary new.
+	s do: [ :assoc | 
+		(d at: assoc key ifAbsentPut: [ OrderedCollection new ]) add: assoc value ].
+
+	allStates := qTable keys.
+	m := RSMondrian new.
+	m shape circle.
+	m nodes: allStates.
+	m line connectToAll: [ :aState | d at: aState ifAbsent: [ #() ] ].
+	m layout force.
+	m build.
+	^ m canvas.
 ]
 
 { #category : #visualization }
@@ -258,9 +325,23 @@ RL >> visualizeQTable [
 	allBoxes := c shapes select: [ :s | s class == RSBox ].
 	RSNormalizer color
 		shapes: allBoxes;
-		from: Color red; to: Color green;
+		from: Color red darker darker; to: Color green darker darker;
 		normalize.
 	allBoxes @ RSLabeled middle.
+	^ c @ RSCanvasController
+]
+
+{ #category : #'as yet unclassified' }
+RL >> visualizeResult [
+	"Assume that the method play was previously invoked"
+	| c s |
+	self play.
+	c := startState visualize.
+	path do: [ :p |
+		s := RSCircle new size: 5; color: Color blue lighter lighter.
+		c add: s.
+		s translateTo: p - (0.5 @ 0.5) * 20.
+	].
 	^ c @ RSCanvasController
 ]
 
@@ -278,4 +359,24 @@ RL >> visualizeReward [
 	c addDecoration: (RSVerticalTick new).
 	c build.
 	^ c canvas
+]
+
+{ #category : #'as yet unclassified' }
+RL >> visualizeWeightedGraph [
+	| s allStates d m |
+	s := stateConnections asSet asArray.
+	d := Dictionary new.
+	s do: [ :assoc | 
+		(d at: assoc key ifAbsentPut: [ OrderedCollection new ]) add: assoc value ].
+
+	allStates := qTable keys.
+	m := RSMondrian new.
+	m shape circle.
+	m nodes: allStates.
+	m line connectToAll: [ :aState | d at: aState ifAbsent: [ #() ] ].
+	m normalizeSize: [ :aState | (qTable at: aState) average ] from: 5 to: 30.
+	m normalizeColor: [ :aState | (qTable at: aState) max ] from: Color gray to: Color green.
+	m layout force.
+	m build.
+	^ m canvas.
 ]

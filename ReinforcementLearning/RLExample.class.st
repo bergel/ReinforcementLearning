@@ -1,7 +1,7 @@
 Class {
 	#name : #RLExample,
 	#superclass : #Object,
-	#category : #'ReinforcementLearning-Core'
+	#category : #'ReinforcementLearning-Examples'
 }
 
 { #category : #raw }
