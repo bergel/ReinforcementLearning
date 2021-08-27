@@ -44,6 +44,9 @@ jobs:
           git add uml.png
       - name: Check if the class diagram is different and has to be pushed
         run: |          
+          echo "DEBUG:"
+          git status --porcelain
+          echo "END DEBUG"
           if [ -z "$(git status --porcelain | grep " M")" ]; then
             echo "Nothing to push"
             exit 0
