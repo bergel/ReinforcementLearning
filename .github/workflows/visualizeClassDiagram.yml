@@ -47,7 +47,7 @@ jobs:
           echo "DEBUG:"
           git status --porcelain
           echo "END DEBUG"
-          if [ -z "$(git status --porcelain | grep " M")" ]; then
+          if [ -z "$(git status --porcelain | grep "M ")" ]; then
             echo "Nothing to push"
             exit 0
           else
