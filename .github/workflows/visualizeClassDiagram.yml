@@ -45,10 +45,10 @@ jobs:
       - name: Check if the class diagram is different and has to be pushed
         run: |          
           if [ -z "$(git status --porcelain | grep " M")" ]; then
-            echo "New class diagram needs to be pushed"
-          else
             echo "Nothing to push"
             exit 0
+          else
+            echo "New class diagram needs to be pushed"
           fi          
       - name: Commit files
         run: |
