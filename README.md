@@ -7,7 +7,7 @@
 Reinforcement learning is a machine learning algorithm that (i) explores a graph made of states and actions, and (ii) identifies an optimal route in this graph based on a reward mechanism. The code contained in this repository implements the Q-Learning algorithm. It is simple and provides some visualization. The UML Class diagram of this project is [available online](https://github.com/bergel/ReinforcementLearning/blob/main/ci_data/uml.png).
 
 
-The code provided in this repository is part of the book titled _Agile Visualization with Pharo -- Crafting Interactive Visual Support Using Roassal_, edited by APress.
+The code provided in this repository is part of the book titled _Agile Visualization with Pharo -- Crafting Interactive Visual Support Using Roassal_, published by APress.
 
 -----
 ## Installation
