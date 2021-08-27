@@ -54,7 +54,14 @@ jobs:
           ls -all
           echo "END-DEBUG2"
           git add coverageBadge.svg
-
+      - name: Check if the class diagram is different and has to be pushed
+        run: |          
+          if [ -z "$(git status --porcelain | grep " M")" ]; then
+            echo "Nothing to push"
+            exit 0
+          else
+            echo "New class diagram needs to be pushed"
+          fi     
       - name: Commit files
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
