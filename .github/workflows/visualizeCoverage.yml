@@ -43,10 +43,16 @@ jobs:
           mkdir -p ci_data
           cd ci_data
           mv ../coverage.png .
+          echo "DEBUG1:"
+          ls -all
+          echo "END-DEBUG1"
           git add coverage.png
           cat /tmp/ratio
           wget "https://img.shields.io/badge/Coverage-`cat /tmp/ratio`-green"
           mv "Coverage-`cat /tmp/ratio`-green" coverageBadge.svg
+          echo "DEBUG2:"
+          ls -all
+          echo "END-DEBUG2"
           git add coverageBadge.svg
 
       - name: Commit files
