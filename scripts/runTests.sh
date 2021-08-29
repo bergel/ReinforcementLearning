@@ -7,7 +7,7 @@ if [ ! -f "$FILE" ]; then
     exit 1
 fi
 
-# Print the result of the tests
+# Print the result of the tests 
 cat $FILE
 
 if grep -q ERROR "$FILE"; then
