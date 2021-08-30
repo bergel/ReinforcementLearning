@@ -30,28 +30,12 @@ jobs:
 
       - name: Producing class diagram
         run: bash ./scripts/visualizeClassDiagram.sh
-      - name: Archive code coverage results
-        uses: actions/upload-artifact@v2
-        with:
-          name: code-coverage-report
-          path: uml.png
       - name: Push the picture
         run: |
           mkdir -p ci_data
           cd ci_data
           mv ../uml.png .
-          git add uml.png
-      - name: Check if the class diagram is different and has to be pushed
-        run: |
-          echo "DEBUG:"
-          git status --porcelain
-          echo "END DEBUG"
-          if [ -z "$(git status --porcelain | grep "M ")" ]; then
-            echo "Nothing to push"
-            exit 0
-          else
-            echo "New class diagram needs to be pushed"
-          fi          
+          git add uml.png       
       - name: Commit files
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
