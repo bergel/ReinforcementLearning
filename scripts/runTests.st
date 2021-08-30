@@ -1,7 +1,7 @@
 "We capture all the unit tests in Pharo"
 unitTestsBefore := TestCase withAllSubclasses.
 
-"We load the application software analyzer"
+"We load the application"
 [ Metacello new
     baseline: 'ReinforcementLearning';
     repository: 'github://bergel/ReinforcementLearning:main';
