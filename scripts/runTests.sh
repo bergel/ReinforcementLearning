@@ -7,13 +7,13 @@ if [ ! -f "$FILE" ]; then
     exit 1
 fi
 
-
+# Print the result of the tests 
 cat $FILE
 
 if grep -q ERROR "$FILE"; then
-		echo "SOME ERRORS!"
-		exit 1
+    echo "SOME ERRORS!"
+    exit 1
 else
-		echo "ALL TEST PASSED"
-		exit 0
+    echo "ALL TEST PASSED"
+    exit 0
 fi

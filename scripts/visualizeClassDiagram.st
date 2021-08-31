@@ -21,7 +21,7 @@ uml build.
 
 uml canvas extent: 1000 @ 1000.
 RSPNGExporter new
-	canvas: uml canvas;
-	exportToFile: 'uml.png' asFileReference.
+  canvas: uml canvas;
+  exportToFile: 'uml.png' asFileReference.
 
 SmalltalkImage current quitPrimitive

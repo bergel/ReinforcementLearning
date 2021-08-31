@@ -32,34 +32,21 @@ jobs:
       - name: Run unit tests
         run: bash ./scripts/visualizeCoverage.sh
 
-      - name: Archive code coverage results
-        uses: actions/upload-artifact@v2
-        with:
-          name: code-coverage-report
-          path: coverage.png
-
       - name: Push the picture
         run: |
           mkdir -p ci_data
           cd ci_data
           mv ../coverage.png .
-          echo "DEBUG1:"
-          ls -all
-          echo "END-DEBUG1"
           git add coverage.png
           cat /tmp/ratio
           wget "https://img.shields.io/badge/Coverage-`cat /tmp/ratio`-green"
           mv "Coverage-`cat /tmp/ratio`-green" coverageBadge.svg
-          echo "DEBUG2:"
-          ls -all
-          echo "END-DEBUG2"
           git add coverageBadge.svg
-
       - name: Commit files
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git commit -m "Add changes" -a
+          git diff-index --quiet HEAD || git commit -m "Add changes" -a
 
       - name: Push changes
         uses: ad-m/github-push-action@master

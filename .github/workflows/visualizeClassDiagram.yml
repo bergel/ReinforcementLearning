@@ -28,33 +28,19 @@ jobs:
           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
           fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
 
-      # Runs a single command using the runners shell
       - name: Producing class diagram
         run: bash ./scripts/visualizeClassDiagram.sh
-      - name: Archive code coverage results
-        uses: actions/upload-artifact@v2
-        with:
-          name: code-coverage-report
-          path: uml.png
       - name: Push the picture
         run: |
           mkdir -p ci_data
           cd ci_data
           mv ../uml.png .
-          git add uml.png
-      - name: Check if the class diagram is different and has to be pushed
-        run: |          
-          if [ -z "$(git status --porcelain | grep " M")" ]; then
-            echo "Nothing to push"
-            exit 0
-          else
-            echo "New class diagram needs to be pushed"
-          fi          
+          git add uml.png       
       - name: Commit files
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git commit -m "Add changes" -a
+          git diff-index --quiet HEAD || git commit -m "Add changes" -a
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
