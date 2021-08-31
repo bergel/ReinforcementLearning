@@ -36,5 +36,27 @@ RLTest >> testExamples [
 	self assert: r equals: #(-104 997 999 999 999 999 998 999 999 998 999 999 999 999 999 998 998 -100 999 997).
 	
 	r := RLExample new exampleZombie02.
-	self assert: r equals: #(-104 -103 -106 -103 -123 -108 -107 -141 -104 -110 -116 -104 -112 -104 -106 -100 -106 995 -105 -128 -106 -105 -106 -104 -104 985 -101 991 997 996 997 997 997 997 997 995 996 997 997 996 997 997 995 997 997 997 -102 997 996 996)
+	self assert: r equals: #(-104 -103 -106 -103 -123 -108 -107 -141 -104 -110 -116 -104 -112 -104 -106 -100 -106 995 -105 -128 -106 -105 -106 -104 -104 985 -101 991 997 996 997 997 997 997 997 995 996 997 997 996 997 997 995 997 997 997 -102 997 996 996).
+	
+	r := RLExample new simple.
+	self assert: r class equals: RL
+]
+
+{ #category : #'tests - engine' }
+RLTest >> testVisualizations [
+
+	| grid rl visualizationSelectors |
+	grid := RLGrid new setContent:  '.m.e'.
+	rl := RL new setInitialGrid: grid.
+	rl run.
+
+	visualizationSelectors := rl class selectors select: [ :sel | sel beginsWith: 'visualize' ].
+	visualizationSelectors do: [ :k | 
+		rl perform: k ].
+	
+	visualizationSelectors := rl class selectors select: [ :sel | sel beginsWith: 'inspector' ].
+	visualizationSelectors do: [ :k | 
+		rl perform: k withEnoughArguments: {  StInspectionContext new } ].
+	
+
 ]

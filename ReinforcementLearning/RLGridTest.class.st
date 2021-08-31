@@ -103,3 +103,20 @@ RLGridTest >> testVisualization01 [
 	self assert: c class equals: RSCanvas.
 	self assert: c numberOfShapes equals: g contentAsString size
 ]
+
+{ #category : #tests }
+RLGridTest >> testVisualizations [
+
+	| grid visualizationSelectors |
+	grid := RLGrid new setContent:  '.m.e'.
+
+	visualizationSelectors := grid class selectors select: [ :sel | sel beginsWith: 'visualize' ].
+	visualizationSelectors do: [ :k | 
+		grid perform: k ].
+	
+	visualizationSelectors := grid class selectors select: [ :sel | sel beginsWith: 'inspector' ].
+	visualizationSelectors do: [ :k | 
+		grid perform: k withEnoughArguments: {  StInspectionContext new } ].
+	
+
+]

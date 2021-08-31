@@ -196,7 +196,7 @@ RLExample >> simple [
 
 	| rl |
 	rl := RL new setInitialGrid: (RLGrid new setSize: 8; setZombies: 10; setIceCreamBottomRight).
-	rl numberOfEpisodes: 500.
+	rl numberOfEpisodes: 100.
 	rl epsilon: 0.1.
 	rl run.
 

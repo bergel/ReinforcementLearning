@@ -266,11 +266,6 @@ RL >> setInitialGrid: aGrid [
 	startState := RLState new grid: aGrid
 ]
 
-{ #category : #accessing }
-RL >> startState [
-	^ startState
-]
-
 { #category : #visualization }
 RL >> visualize [
 	| c s |

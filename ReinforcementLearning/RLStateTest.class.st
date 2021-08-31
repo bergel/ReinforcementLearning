@@ -89,6 +89,24 @@ RLStateTest >> testInitialCarPosition03 [
 	self assert: s position equals: 1 @ 2
 ]
 
+{ #category : #tests }
+RLStateTest >> testVisualizations [
+
+	| grid visualizationSelectors state |
+	grid := RLGrid new setContent:  '.m.e'.
+	state := RLState new grid: grid; position: 2 @ 1.
+
+	visualizationSelectors := state class selectors select: [ :sel | sel beginsWith: 'visualize' ].
+	visualizationSelectors do: [ :k | 
+		state perform: k ].
+	
+	visualizationSelectors := state class selectors select: [ :sel | sel beginsWith: 'inspector' ].
+	visualizationSelectors do: [ :k | 
+		state perform: k withEnoughArguments: {  StInspectionContext new } ].
+	
+
+]
+
 { #category : #visualization }
 RLStateTest >> testVisualize01 [
 
