@@ -70,5 +70,12 @@ RSPNGExporter new
   canvas: m canvas;
   exportToFile: 'coverage.png' asFileReference.
 
+"We create a file that will contain the result of the test coverage"
+path := '/tmp/ratio'.
+path asFileReference exists ifTrue: [ path asFileReference delete ].
+stream := path asFileReference writeStream.
+stream nextPutAll: profiler coverage asString.
+stream close.
+
 "Quitting Pharo"
 SmalltalkImage current quitPrimitive
