@@ -24,7 +24,7 @@
 shouldClassHaveName := true.
 classNameHeight := 3.
 packageNameAsRegExp := 'ReinforcementLearning*'.
-numberOfMethodsToList := 10;
+numberOfMethodsToList := 3;
 
 "Script that visualize the coverage"
 profiler := 'Hapao2' asClass runTestsForPackagesMatching: packageNameAsRegExp.
