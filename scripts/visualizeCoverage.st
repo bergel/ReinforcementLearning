@@ -24,6 +24,7 @@
 shouldClassHaveName := true.
 classNameHeight := 3.
 packageNameAsRegExp := 'ReinforcementLearning*'.
+numberOfMethodsToList := 10;
 
 "Script that visualize the coverage"
 profiler := 'Hapao2' asClass runTestsForPackagesMatching: packageNameAsRegExp.
@@ -52,7 +53,7 @@ m canvas add: lbl.
 "Show a few uncovered methods"
 uncoveredMethods := profiler noncoveredMethods.
 uncoveredMethods notEmpty ifTrue: [ 
-  labels := RSLabel models: (uncoveredMethods copyFrom: 1 to: (uncoveredMethods size min: 10)).
+  labels := RSLabel models: (uncoveredMethods copyFrom: 1 to: (uncoveredMethods size min: numberOfMethodsToList)).
   RSCellLayout new lineItemsCount: 2; on: labels.
   RSLocation move: labels below: m canvas nodes.
   labels translateBy: 0 @ 40.
